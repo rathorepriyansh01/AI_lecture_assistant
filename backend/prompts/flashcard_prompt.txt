@@ -1,0 +1,5 @@
+Generate flashcards from the lecture.
+
+Lecture
+
+{context}

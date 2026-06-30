@@ -1,0 +1,7 @@
+Generate a concise summary of the lecture below.
+
+Lecture
+
+{context}
+
+Summary

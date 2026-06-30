@@ -1,0 +1,7 @@
+Generate well-structured study notes.
+
+Lecture
+
+{context}
+
+Notes
