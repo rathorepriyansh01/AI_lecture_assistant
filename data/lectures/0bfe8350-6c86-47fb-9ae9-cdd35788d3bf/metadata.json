@@ -10,7 +10,7 @@
         "original_filename": "MIT6_S897S19_lec01_300k.mp4",
         "course_name": "",
         "uploaded_at": "2026-06-28 17:11:53",
-        "last_updated": "2026-06-30 21:32:56"
+        "last_updated": "2026-07-02 10:05:06"
     },
     "pipeline": {
         "upload_completed": true,
@@ -49,17 +49,39 @@
         "last_error": ""
     },
     "features": {
-        "summary_generated": false,
+        "summary_generated": true,
         "notes_generated": false,
         "quiz_generated": false,
         "flashcards_generated": false,
         "mindmap_generated": false
     },
     "exports": {
-        "summary_path": "",
-        "notes_path": "",
-        "quiz_path": "",
-        "flashcards_path": "",
-        "mindmap_path": ""
-    }
+
+    "summary_short_path": "",
+
+    "summary_detailed_path": "",
+
+    "summary_bullet_path": "",
+
+    "summary_keypoints_path": "",
+
+    "summary_chapter_path": "",
+
+    "notes_short_path": "",
+
+    "notes_detailed_path": "",
+
+    "notes_exam_path": "",
+
+    "notes_revision_path": "",
+
+    "notes_cheatsheet_path": "",
+
+    "quiz_path": "",
+
+    "flashcards_path": "",
+
+    "mindmap_path": ""
+
+}
 }

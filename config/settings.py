@@ -9,6 +9,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+import groq
+from langchain_nvidia_ai_endpoints import ChatNVIDIA
+
 # ---------------------------------------------------------
 # Load Environment Variables
 # ---------------------------------------------------------
@@ -72,6 +75,9 @@ MAX_CONTEXT_CHARS = 12000
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+
+
 # ==========================================================
 # Embedding
 # ==========================================================
@@ -95,9 +101,24 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
+
+
 TEMPERATURE = 0.2
 
 MAX_TOKENS = 4096
+
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+
+NVIDIA_MODEL = os.getenv(
+
+    "NVIDIA_MODEL",
+
+    "meta/llama-3.1-70b-instruct"
+
+)
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "nvidia")
+
 
 # ---------------------------------------------------------
 # Create Required Directories

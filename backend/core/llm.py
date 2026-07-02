@@ -1,29 +1,14 @@
 """
 =========================================================
 AI Lecture Assistant
-Shared LLM Manager
-Production Version
+LLM Manager
 =========================================================
-
-Supports:
-- Groq
-- Gemini (Future)
 """
 
 import logging
-from langchain_groq import ChatGroq
 
-from config.settings import (
-    GROQ_API_KEY,
-    GROQ_MODEL,
-    TEMPERATURE,
-    MAX_TOKENS
-)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s"
-)
+from config.settings import LLM_PROVIDER
+from backend.providers.provider_factory import ProviderFactory
 
 logger = logging.getLogger(__name__)
 
@@ -31,98 +16,69 @@ logger = logging.getLogger(__name__)
 class LLMManager:
 
     _instance = None
-    _llm = None
+    _factory = None
 
     def __new__(cls):
 
         if cls._instance is None:
+
             cls._instance = super().__new__(cls)
 
         return cls._instance
 
     def __init__(self):
 
-        if LLMManager._llm is None:
-
-            self.provider = "Groq"
-
-            self.model_name = GROQ_MODEL
-
-            self.temperature = TEMPERATURE
-
-            self.max_tokens = MAX_TOKENS
+        if LLMManager._factory is None:
 
             logger.info("=" * 70)
-            logger.info("Loading Groq LLM...")
+            logger.info("Initializing LLM Manager...")
             logger.info("=" * 70)
 
-            LLMManager._llm = ChatGroq(
+            self.default_provider = LLM_PROVIDER.lower()
 
-                api_key=GROQ_API_KEY,
+            LLMManager._factory = ProviderFactory()
 
-                model=self.model_name,
+            logger.info(
+                f"Default Provider : {self.default_provider.upper()}"
+            )
 
-                temperature=self.temperature,
-
-                max_tokens=self.max_tokens
-
-    )
+            logger.info("=" * 70)
 
     @property
-    def llm(self):
-        return LLMManager._llm
+    def factory(self):
 
-    # ======================================================
-    # Ask LLM
-    # ======================================================
+        return LLMManager._factory
+
+    # =====================================================
+    # Invoke
+    # =====================================================
 
     def invoke(
+
         self,
-        prompt: str
+
+        prompt,
+
+        provider=None
+
     ):
 
-        response = self.llm.invoke(prompt)
+        provider = provider or self.default_provider
 
-        return response.content
+        result = self.factory.safe_invoke(
+
+            prompt,
+
+            primary=provider
+
+        )
+
+        return result["response"]
+
     # =====================================================
     # Health Check
     # =====================================================
 
     def health_check(self):
 
-        return {
-
-        "status": "healthy",
-
-        "provider": self.provider,
-
-        "model": self.model_name,
-
-        "temperature": self.temperature,
-
-        "max_tokens": self.max_tokens
-
-    }
-    # ======================================================
-    # Chat
-    # ======================================================
-
-    def chat(
-        self,
-        system_prompt,
-        user_prompt
-    ):
-
-        prompt = f"""
-
-{system_prompt}
-
------------------------------------
-
-{user_prompt}
-
-"""
-
-        response = self.llm.invoke(prompt)
-
-        return response.content
+        return self.factory.health_check()

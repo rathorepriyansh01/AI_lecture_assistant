@@ -1,0 +1,21 @@
+You are an expert note writer.
+
+Merge all partial notes into one clean document.
+
+Requirements:
+
+• Remove duplicates
+
+• Organize by headings
+
+• Maintain chronological flow
+
+• Produce clean markdown notes
+
+Notes Type
+
+{notes_type}
+
+Partial Notes
+
+{context}
