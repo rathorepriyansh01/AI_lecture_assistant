@@ -1,5 +1,0 @@
-Generate {num_questions} multiple choice questions.
-
-Lecture
-
-{context}

@@ -39,20 +39,68 @@ class NotesService:
         self.manager = MetadataManager()
 
         logger.info("Notes Service Ready.")
+        
+        self.supported_types = [
+
+            "short",
+
+            "detailed",
+
+            "exam",
+
+            "revision",
+
+            "cheatsheet"
+
+        ]
+
+    # =====================================================
+    # Get Lecture Directory
+    # =====================================================
+
+    from pathlib import Path
+
+
+    def get_lecture_directory(
+
+        self,
+
+        lecture_id
+
+    ):
+
+        return (
+
+            Path(__file__).resolve().parents[2]
+
+            / "data"
+
+            / "lectures"
+
+            / lecture_id
+
+        )
 
     # =====================================================
     # Health Check
     # =====================================================
 
-    def health_check(self):
+    
+    def health_check(
+
+        self
+
+    ):
 
         return {
 
+            "service": "Notes",
+
             "status": "healthy",
 
-            "service": "Notes Service",
+            "supported_types": self.supported_types,
 
-            "llm": self.llm.health_check()
+            "cache": True
 
         }
     # =====================================================
@@ -186,7 +234,11 @@ class NotesService:
         notes_type,
         use_cache=True
     ):
+        notes_type = self.validate_type(
+        notes_type
+        )
         start = time.time()
+        
         logger.info("=" * 70)
         logger.info("Generating Notes...")
         logger.info("=" * 70)
@@ -206,13 +258,13 @@ class NotesService:
             logger.info("Notes Loaded From Cache")
             logger.info("=" * 70)
 
-            with open(
-            notes_file,
-            "r",
-            encoding="utf-8"
-                ) as f:
+            notes = self.load_notes(
 
-                notes = f.read()
+    lecture_id,
+
+    notes_type
+
+)
 
             return {
 
@@ -277,14 +329,15 @@ class NotesService:
         # Save Notes
         # ==========================
 
-        with open(
-            notes_file,
-            "w",
-            encoding="utf-8"
-        ) as f:
-            f.write(
-                final_notes
-            )
+        self.save_notes(
+
+    lecture_id,
+
+    final_notes,
+
+    notes_type
+
+)
         # =====================================
         # Update Metadata
         # =====================================
@@ -382,3 +435,196 @@ class NotesService:
         )
 
         return chunks
+    # =====================================================
+    # Validate Notes Type
+    # =====================================================
+
+    def validate_type(
+
+        self,
+
+        notes_type
+
+    ):
+
+        notes_type = notes_type.lower()
+
+        if notes_type not in self.supported_types:
+
+            raise ValueError(
+
+                f"""
+
+    Invalid Notes Type : {notes_type}
+
+    Supported Types :
+
+    {', '.join(self.supported_types)}
+
+    """
+
+            )
+
+        return notes_type
+    
+    # =====================================================
+    # Generate By Type
+    # =====================================================
+
+    def generate_by_type(
+
+        self,
+
+        lecture_id,
+
+        notes_type,
+
+        use_cache=True
+
+    ):
+
+        return self.generate(
+
+            lecture_id=lecture_id,
+
+            notes_type=notes_type,
+
+            use_cache=use_cache
+
+        )
+    
+    # =====================================================
+    # Generate All Notes
+    # =====================================================
+
+    def generate_all(
+
+        self,
+
+        lecture_id,
+
+        use_cache=True
+
+    ):
+
+        outputs = {}
+
+        for note_type in self.supported_types:
+
+            logger.info("=" * 70)
+
+            logger.info(
+
+                f"Generating {note_type.upper()} Notes"
+
+            )
+
+            logger.info("=" * 70)
+
+            outputs[note_type] = self.generate(
+
+                lecture_id,
+
+                note_type,
+
+                use_cache
+
+            )
+
+        return outputs
+    # =====================================================
+    # Save Notes
+    # =====================================================
+
+    def save_notes(
+
+        self,
+
+        lecture_id,
+
+        notes,
+
+        notes_type
+
+    ):
+
+        lecture_dir = self.get_lecture_directory(
+
+            lecture_id
+
+        )
+
+        file_path = lecture_dir / f"notes_{notes_type}.md"
+
+        with open(
+
+            file_path,
+
+            "w",
+
+            encoding="utf-8"
+
+        ) as f:
+
+            f.write(notes)
+
+        return file_path
+    # =====================================================
+    # Load Notes
+    # =====================================================
+
+    def load_notes(
+
+        self,
+
+        lecture_id,
+
+        notes_type
+
+    ):
+
+        lecture_dir = self.get_lecture_directory(
+
+            lecture_id
+
+        )
+
+        file_path = lecture_dir / f"notes_{notes_type}.md"
+
+        if not file_path.exists():
+
+            return None
+
+        with open(
+
+            file_path,
+
+            "r",
+
+            encoding="utf-8"
+
+        ) as f:
+
+            return f.read()
+        
+    # =====================================================
+    # Export
+    # =====================================================
+
+    def export_notes(
+
+        self,
+
+        lecture_id,
+
+        notes_type
+
+    ):
+
+        return self.load_notes(
+
+            lecture_id,
+
+            notes_type
+
+    )

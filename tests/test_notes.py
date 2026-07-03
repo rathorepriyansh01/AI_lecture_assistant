@@ -22,7 +22,13 @@ def main():
     use_cache=False
 
 )
+    service = NotesService()
 
+    print(
+
+    service.health_check()
+
+    )
     print()
 
     print("=" * 80)

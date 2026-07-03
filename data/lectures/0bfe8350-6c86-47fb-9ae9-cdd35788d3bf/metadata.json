@@ -10,7 +10,7 @@
         "original_filename": "MIT6_S897S19_lec01_300k.mp4",
         "course_name": "",
         "uploaded_at": "2026-06-28 17:11:53",
-        "last_updated": "2026-07-02 10:05:06"
+        "last_updated": "2026-07-03 22:19:20"
     },
     "pipeline": {
         "upload_completed": true,
@@ -50,38 +50,24 @@
     },
     "features": {
         "summary_generated": true,
-        "notes_generated": false,
+        "notes_generated": true,
         "quiz_generated": false,
         "flashcards_generated": false,
         "mindmap_generated": false
     },
     "exports": {
-
-    "summary_short_path": "",
-
-    "summary_detailed_path": "",
-
-    "summary_bullet_path": "",
-
-    "summary_keypoints_path": "",
-
-    "summary_chapter_path": "",
-
-    "notes_short_path": "",
-
-    "notes_detailed_path": "",
-
-    "notes_exam_path": "",
-
-    "notes_revision_path": "",
-
-    "notes_cheatsheet_path": "",
-
-    "quiz_path": "",
-
-    "flashcards_path": "",
-
-    "mindmap_path": ""
-
-}
+        "summary_short_path": "",
+        "summary_detailed_path": "",
+        "summary_bullet_path": "",
+        "summary_keypoints_path": "",
+        "summary_chapter_path": "",
+        "notes_short_path": "",
+        "notes_detailed_path": "",
+        "notes_exam_path": "c:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\0bfe8350-6c86-47fb-9ae9-cdd35788d3bf\\notes_exam.md",
+        "notes_revision_path": "",
+        "notes_cheatsheet_path": "",
+        "quiz_path": "",
+        "flashcards_path": "",
+        "mindmap_path": ""
+    }
 }

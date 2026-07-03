@@ -101,23 +101,39 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
-
+PRIMARY_PROVIDER= os.getenv("PRIMARY_PROVIDER", "gemini")
 
 TEMPERATURE = 0.2
 
 MAX_TOKENS = 4096
 
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+SECONDARY_PROVIDER = os.getenv("SECONDARY_PROVIDER", "groq")
+THIRD_PROVIDER = os.getenv("THIRD_PROVIDER", "nvidia")
+
 
 NVIDIA_MODEL = os.getenv(
 
     "NVIDIA_MODEL",
 
-    "meta/llama-3.1-70b-instruct"
+    "deepseek-ai/deepseek-v4-flasht"
 
 )
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+GEMINI_MODEL = os.getenv(
+
+    "GEMINI_MODEL",
+
+    "gemini-2.5-flash"
+
+)
+
+
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "nvidia")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini")
 
 
 # ---------------------------------------------------------
