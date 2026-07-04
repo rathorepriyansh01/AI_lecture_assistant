@@ -3,6 +3,9 @@
 AI Lecture Assistant
 Provider Factory
 =========================================================
+
+STATUS : FINAL
+Version : 1.0
 """
 
 import logging
@@ -20,13 +23,14 @@ from config.settings import (
     MAX_TOKENS,
     PRIMARY_PROVIDER,
     SECONDARY_PROVIDER,
-    THIRD_PROVIDER
+    THIRD_PROVIDER,
+    MAX_RETRY,
+    PROVIDER_COOLDOWN,
 )
 
 from backend.providers.gemini_provider import GeminiProvider
 from backend.providers.groq_provider import GroqProvider
 from backend.providers.nvidia_provider import NvidiaProvider
-
 
 logger = logging.getLogger(__name__)
 
@@ -35,44 +39,21 @@ class ProviderFactory:
 
     def __init__(self):
 
-        self._lock = Lock()
-
         logger.info("=" * 70)
         logger.info("Initializing Provider Factory...")
         logger.info("=" * 70)
 
-        # =====================================================
-        # Register Providers
-        # =====================================================
+        self._lock = Lock()
 
-        self.providers = {
+        # ==========================================
+        # Lazy Provider Cache
+        # ==========================================
 
-            "gemini": GeminiProvider(
-                api_key=GEMINI_API_KEY,
-                model=GEMINI_MODEL,
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS
-            ),
+        self.providers = {}
 
-            "groq": GroqProvider(
-                api_key=GROQ_API_KEY,
-                model=GROQ_MODEL,
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS
-            ),
-
-            "nvidia": NvidiaProvider(
-                api_key=NVIDIA_API_KEY,
-                model=NVIDIA_MODEL,
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS
-            )
-
-        }
-
-        # =====================================================
+        # ==========================================
         # Provider Priority
-        # =====================================================
+        # ==========================================
 
         self.priority = [
 
@@ -84,9 +65,9 @@ class ProviderFactory:
 
         ]
 
-        # =====================================================
+        # ==========================================
         # Health Cache
-        # =====================================================
+        # ==========================================
 
         self.health = {
 
@@ -116,13 +97,13 @@ class ProviderFactory:
 
         }
 
-        # =====================================================
+        # ==========================================
         # Statistics
-        # =====================================================
+        # ==========================================
 
         self.statistics = {
 
-            "gemini": {
+            provider: {
 
                 "success": 0,
 
@@ -130,40 +111,98 @@ class ProviderFactory:
 
                 "retry": 0,
 
-                "latency": []
-
-            },
-
-            "groq": {
-
-                "success": 0,
-
-                "failure": 0,
-
-                "retry": 0,
-
-                "latency": []
-
-            },
-
-            "nvidia": {
-
-                "success": 0,
-
-                "failure": 0,
-
-                "retry": 0,
+                "calls": 0,
 
                 "latency": []
 
             }
+
+            for provider in [
+
+                "gemini",
+
+                "groq",
+
+                "nvidia"
+
+            ]
 
         }
 
         logger.info("Provider Factory Ready.")
 
     # =====================================================
-    # Get Provider
+    # Current Time
+    # =====================================================
+
+    def now(self):
+
+        return int(time.time())
+
+    # =====================================================
+    # Create Provider
+    # =====================================================
+
+    def _create_provider(
+
+        self,
+
+        provider_name
+
+    ):
+
+        provider_name = provider_name.lower()
+
+        if provider_name == "gemini":
+
+            return GeminiProvider(
+
+                api_key=GEMINI_API_KEY,
+
+                model=GEMINI_MODEL,
+
+                temperature=TEMPERATURE,
+
+                max_tokens=MAX_TOKENS
+
+            )
+
+        if provider_name == "groq":
+
+            return GroqProvider(
+
+                api_key=GROQ_API_KEY,
+
+                model=GROQ_MODEL,
+
+                temperature=TEMPERATURE,
+
+                max_tokens=MAX_TOKENS
+
+            )
+
+        if provider_name == "nvidia":
+
+            return NvidiaProvider(
+
+                api_key=NVIDIA_API_KEY,
+
+                model=NVIDIA_MODEL,
+
+                temperature=TEMPERATURE,
+
+                max_tokens=MAX_TOKENS
+
+            )
+
+        raise ValueError(
+
+            f"Unknown provider : {provider_name}"
+
+        )
+
+    # =====================================================
+    # Get Provider (Lazy Loading)
     # =====================================================
 
     def get_provider(
@@ -176,30 +215,30 @@ class ProviderFactory:
 
         provider_name = provider_name.lower()
 
-        if provider_name not in self.providers:
+        with self._lock:
 
-            raise ValueError(
+            if provider_name not in self.providers:
 
-                f"Unknown Provider : {provider_name}"
+                logger.info(
 
-            )
+                    f"Loading {provider_name.upper()} Provider..."
+
+                )
+
+                self.providers[provider_name] = (
+
+                    self._create_provider(
+
+                        provider_name
+
+                    )
+
+                )
 
         return self.providers[provider_name]
 
     # =====================================================
-    # Current Time
-    # =====================================================
-
-    def now(self):
-
-        return int(
-
-            time.time()
-
-        )
-
-    # =====================================================
-    # Provider Available
+    # Availability
     # =====================================================
 
     def is_available(
@@ -231,7 +270,6 @@ class ProviderFactory:
             return True
 
         return False
-
     # =====================================================
     # Disable Provider
     # =====================================================
@@ -242,9 +280,11 @@ class ProviderFactory:
 
         provider_name,
 
-        cooldown=600
+        cooldown=PROVIDER_COOLDOWN
 
     ):
+
+        provider_name = provider_name.lower()
 
         self.health[provider_name]["available"] = False
 
@@ -256,9 +296,71 @@ class ProviderFactory:
 
         logger.warning(
 
-            f"{provider_name.upper()} disabled for "
+            f"{provider_name.upper()} disabled "
 
-            f"{cooldown} seconds."
+            f"for {cooldown} seconds."
+
+        )
+
+    # =====================================================
+    # Reset Provider
+    # =====================================================
+
+    def reset_provider(
+
+        self,
+
+        provider_name
+
+    ):
+
+        provider_name = provider_name.lower()
+
+        self.health[provider_name]["available"] = True
+
+        self.health[provider_name]["retry_after"] = 0
+
+        logger.info(
+
+            f"{provider_name.upper()} reset successfully."
+
+        )
+
+    # =====================================================
+    # Retry Policy
+    # =====================================================
+
+    def should_retry(
+
+        self,
+
+        error
+
+    ):
+
+        message = str(error).lower()
+
+        retry_keywords = [
+
+            "503",
+
+            "timeout",
+
+            "connection",
+
+            "temporarily",
+
+            "unavailable",
+
+            "network"
+
+        ]
+
+        return any(
+
+            keyword in message
+
+            for keyword in retry_keywords
 
         )
 
@@ -280,6 +382,8 @@ class ProviderFactory:
 
         stats["success"] += 1
 
+        stats["calls"] += 1
+
         stats["latency"].append(
 
             latency
@@ -294,7 +398,11 @@ class ProviderFactory:
 
     ):
 
-        self.statistics[provider_name]["failure"] += 1
+        stats = self.statistics[provider_name]
+
+        stats["failure"] += 1
+
+        stats["calls"] += 1
 
     def add_retry(
 
@@ -312,80 +420,105 @@ class ProviderFactory:
 
     def health_check(self):
 
-        return {
+        report = {}
 
-            "priority": self.priority,
+        for provider in self.priority:
 
-            "providers": self.health,
+            report[provider] = {
 
-            "statistics": self.statistics
+                "available": self.health[provider]["available"],
 
-        }
+                "cooldown":
+
+                    max(
+
+                        0,
+
+                        self.health[provider]["retry_after"]
+
+                        - self.now()
+
+                    ),
+
+                "statistics":
+
+                    self.statistics[provider]
+
+            }
+
+        return report
 
     # =====================================================
-    # Continue In Part-2
+    # Provider Statistics
     # =====================================================
 
-        # =====================================================
-    # Reset Provider
+    def get_statistics(self):
+
+        output = {}
+
+        for provider, stats in self.statistics.items():
+
+            latency = stats["latency"]
+
+            average_latency = (
+
+                round(
+
+                    sum(latency) / len(latency),
+
+                    2
+
+                )
+
+                if latency
+
+                else 0
+
+            )
+
+            output[provider] = {
+
+                "calls": stats["calls"],
+
+                "success": stats["success"],
+
+                "failure": stats["failure"],
+
+                "retry": stats["retry"],
+
+                "average_latency": average_latency
+
+            }
+
+        return output
+
+    # =====================================================
+    # Clear Statistics
     # =====================================================
 
-    def reset_provider(
+    def clear_statistics(self):
 
-        self,
+        for provider in self.statistics:
 
-        provider_name
+            self.statistics[provider] = {
 
-    ):
+                "success": 0,
 
-        provider_name = provider_name.lower()
+                "failure": 0,
 
-        self.health[provider_name]["available"] = True
+                "retry": 0,
 
-        self.health[provider_name]["retry_after"] = 0
+                "calls": 0,
+
+                "latency": []
+
+            }
 
         logger.info(
 
-            f"{provider_name.upper()} is available again."
+            "Provider statistics cleared."
 
         )
-
-    # =====================================================
-    # Should Retry
-    # =====================================================
-
-    def should_retry(
-
-        self,
-
-        error
-
-    ):
-
-        text = str(error).lower()
-
-        retry_errors = [
-
-            "503",
-
-            "timeout",
-
-            "connection",
-
-            "temporarily",
-
-            "unavailable"
-
-        ]
-
-        return any(
-
-            item in text
-
-            for item in retry_errors
-
-        )
-
     # =====================================================
     # Safe Invoke
     # =====================================================
@@ -400,13 +533,13 @@ class ProviderFactory:
 
     ):
 
+        # ---------------------------------------------
+        # Build Provider Order
+        # ---------------------------------------------
+
         if primary:
 
-            order = [
-
-                primary.lower()
-
-            ]
+            order = [primary.lower()]
 
             for provider in self.priority:
 
@@ -420,17 +553,19 @@ class ProviderFactory:
 
         last_exception = None
 
+        # ---------------------------------------------
+        # Try Providers
+        # ---------------------------------------------
+
         for provider_name in order:
 
-            if not self.is_available(
-
-                provider_name
-
-            ):
+            if not self.is_available(provider_name):
 
                 logger.warning(
 
-                    f"{provider_name.upper()} skipped (cooldown)."
+                    f"{provider_name.upper()} skipped "
+
+                    "(cooldown active)."
 
                 )
 
@@ -442,164 +577,174 @@ class ProviderFactory:
 
             )
 
-            start = time.time()
+            retries = 0
 
-            try:
+            while retries <= MAX_RETRY:
 
-                logger.info(
+                start = time.time()
 
-                    f"Trying {provider_name.upper()}..."
+                try:
 
-                )
+                    logger.info(
 
-                response = provider.invoke(
+                        f"Trying "
 
-                    prompt
+                        f"{provider_name.upper()} "
 
-                )
+                        f"(Attempt {retries + 1})"
 
-                latency = round(
+                    )
 
-                    time.time() - start,
+                    response = provider.invoke(
 
-                    2
+                        prompt
 
-                )
+                    )
 
-                self.add_success(
+                    latency = round(
 
-                    provider_name,
+                        time.time() - start,
 
-                    latency
+                        2
 
-                )
+                    )
 
-                logger.info(
+                    self.add_success(
 
-                    f"{provider_name.upper()} Success ({latency}s)"
+                        provider_name,
 
-                )
+                        latency
 
-                return {
+                    )
 
-                    "provider": provider_name,
+                    logger.info(
 
-                    "response": response,
+                        f"{provider_name.upper()} "
 
-                    "latency": latency
+                        f"Success "
 
-                }
+                        f"({latency}s)"
 
-            except Exception as e:
+                    )
 
-                last_exception = e
+                    return {
 
-                self.add_failure(
+                        "provider": provider_name,
 
-                    provider_name
+                        "response": response,
 
-                )
+                        "latency": latency
 
-                message = str(e).lower()
+                    }
 
-                logger.error(
+                except Exception as e:
 
-                    f"{provider_name.upper()} Failed : {e}"
+                    last_exception = e
 
-                )
+                    retries += 1
 
-                # Authentication / Rate Limit
-                if (
-
-                    "401" in message
-
-                    or "403" in message
-
-                    or "429" in message
-
-                ):
-
-                    self.disable_provider(
+                    self.add_failure(
 
                         provider_name
 
                     )
 
-                    continue
+                    message = str(e).lower()
 
-                # Retry only for temporary errors
-                if self.should_retry(
+                    logger.error(
 
-                    e
+                        f"{provider_name.upper()} "
 
-                ):
-
-                    self.add_retry(
-
-                        provider_name
+                        f"Failed : {e}"
 
                     )
 
-                    try:
+                    # ---------------------------------
+                    # Authentication Errors
+                    # ---------------------------------
 
-                        logger.info(
+                    if (
 
-                            f"Retrying {provider_name.upper()}..."
+                        "401" in message
 
-                        )
+                        or "403" in message
 
-                        response = provider.invoke(
-
-                            prompt
-
-                        )
-
-                        latency = round(
-
-                            time.time() - start,
-
-                            2
-
-                        )
-
-                        self.add_success(
-
-                            provider_name,
-
-                            latency
-
-                        )
-
-                        return {
-
-                            "provider": provider_name,
-
-                            "response": response,
-
-                            "latency": latency
-
-                        }
-
-                    except Exception as retry_error:
+                    ):
 
                         logger.error(
 
-                            retry_error
+                            f"{provider_name.upper()} "
+
+                            "Authentication Failed."
 
                         )
 
-                        self.add_failure(
+                        self.disable_provider(
 
                             provider_name
 
                         )
 
+                        break
+
+                    # ---------------------------------
+                    # Rate Limit
+                    # ---------------------------------
+
+                    if "429" in message:
+
+                        logger.warning(
+
+                            f"{provider_name.upper()} "
+
+                            "Rate Limit Reached."
+
+                        )
+
+                        self.disable_provider(
+
+                            provider_name
+
+                        )
+
+                        break
+
+                    # ---------------------------------
+                    # Retry
+                    # ---------------------------------
+
+                    if self.should_retry(e):
+
+                        self.add_retry(
+
+                            provider_name
+
+                        )
+
+                        logger.info(
+
+                            f"Retrying "
+
+                            f"{provider_name.upper()}..."
+
+                        )
+
                         continue
 
-                continue
+                    # ---------------------------------
+                    # Unknown Error
+                    # ---------------------------------
+
+                    break
+
+        # ---------------------------------------------
+        # All Providers Failed
+        # ---------------------------------------------
 
         raise RuntimeError(
 
-            f"All providers failed.\nLast Error : {last_exception}"
+            "All LLM Providers Failed.\n\n"
+
+            f"Last Error:\n{last_exception}"
 
         )

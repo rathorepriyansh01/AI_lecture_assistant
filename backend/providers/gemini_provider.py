@@ -3,6 +3,8 @@
 AI Lecture Assistant
 Gemini Provider
 =========================================================
+STATUS : FINAL
+Version : 1.0
 """
 
 import logging
@@ -11,36 +13,24 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 from backend.providers.base_provider import BaseProvider
 
-
 logger = logging.getLogger(__name__)
 
 
 class GeminiProvider(BaseProvider):
 
     def __init__(
-
         self,
-
         api_key,
-
         model,
-
-        temperature=0.2,
-
-        max_tokens=2048
-
+        temperature,
+        max_tokens
     ):
 
         super().__init__(
-
             api_key,
-
             model,
-
             temperature,
-
             max_tokens
-
         )
 
         logger.info("=" * 70)
@@ -49,9 +39,9 @@ class GeminiProvider(BaseProvider):
 
         self.client = ChatGoogleGenerativeAI(
 
-            google_api_key=self.api_key,
-
             model=self.model,
+
+            google_api_key=self.api_key,
 
             temperature=self.temperature,
 
@@ -62,42 +52,85 @@ class GeminiProvider(BaseProvider):
         logger.info("Gemini Provider Ready.")
 
     # =====================================================
-    # Invoke
+    # Normalize Response
     # =====================================================
 
-    def invoke(
-
+    def _normalize_response(
         self,
+        content
+    ) -> str:
 
-        prompt: str
+        if content is None:
+            return ""
 
-    ):
-
-        response = self.client.invoke(prompt)
-
-        content = response.content
-
+        # Already string
         if isinstance(content, str):
-            return content
+            return content.strip()
 
+        # List returned by Gemini
         if isinstance(content, list):
 
             output = []
 
-            for part in content:
+            for item in content:
 
-                if hasattr(part, "text"):
-                    output.append(part.text)
+                if hasattr(item, "text"):
 
-                elif isinstance(part, dict):
-                    output.append(part.get("text", ""))
+                    output.append(
+                        item.text
+                    )
+
+                elif isinstance(item, dict):
+
+                    output.append(
+                        item.get("text", "")
+                    )
 
                 else:
-                    output.append(str(part))
 
-            return "\n".join(output)
+                    output.append(
+                        str(item)
+                    )
 
-        return str(content)
+            return "\n".join(output).strip()
+
+        # Object with text attribute
+        if hasattr(content, "text"):
+
+            return str(
+                content.text
+            ).strip()
+
+        return str(content).strip()
+
+    # =====================================================
+    # Invoke
+    # =====================================================
+
+    def invoke(
+        self,
+        prompt
+    ) -> str:
+
+        try:
+
+            response = self.client.invoke(
+                prompt
+            )
+
+            return self._normalize_response(
+                response.content
+            )
+
+        except Exception as e:
+
+            logger.exception(
+                "Gemini Invocation Failed"
+            )
+
+            raise RuntimeError(
+                str(e)
+            )
 
     # =====================================================
     # Health Check
@@ -120,10 +153,17 @@ class GeminiProvider(BaseProvider):
         }
 
     # =====================================================
-    # Provider Name
+    # Provider Info
     # =====================================================
 
-    @property
-    def provider_name(self):
+    def __repr__(self):
 
-        return "gemini"
+        return (
+
+            f"GeminiProvider("
+
+            f"model='{self.model}', "
+
+            f"temperature={self.temperature})"
+
+        )

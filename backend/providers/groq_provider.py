@@ -1,16 +1,19 @@
 """
 =========================================================
+AI Lecture Assistant
 Groq Provider
 =========================================================
+
+STATUS : FINAL
+Version : 1.0
+Future Changes : NO
 """
 
 import logging
 
-from click import prompt
 from langchain_groq import ChatGroq
 
 from backend.providers.base_provider import BaseProvider
-
 
 logger = logging.getLogger(__name__)
 
@@ -18,29 +21,18 @@ logger = logging.getLogger(__name__)
 class GroqProvider(BaseProvider):
 
     def __init__(
-
         self,
-
         api_key,
-
         model,
-
-        temperature=0.2,
-
-        max_tokens=2048
-
+        temperature,
+        max_tokens
     ):
 
         super().__init__(
-
             api_key,
-
             model,
-
             temperature,
-
             max_tokens
-
         )
 
         logger.info("=" * 70)
@@ -59,26 +51,49 @@ class GroqProvider(BaseProvider):
 
         )
 
-        logger.info("Groq Provider Ready")
+        logger.info("Groq Provider Ready.")
+
     # =====================================================
     # Invoke
     # =====================================================
 
     def invoke(
-
         self,
-
         prompt
+    ) -> str:
 
-    ):
+        try:
 
-        response = self.client.invoke(
+            response = self.client.invoke(
+                prompt
+            )
 
-            prompt
+            if response is None:
 
-        )
+                raise RuntimeError(
+                    "Empty response received from Groq."
+                )
 
-        return response.content
+            if hasattr(response, "content"):
+
+                return str(
+                    response.content
+                ).strip()
+
+            return str(
+                response
+            ).strip()
+
+        except Exception as e:
+
+            logger.exception(
+                "Groq Invocation Failed"
+            )
+
+            raise RuntimeError(
+                str(e)
+            )
+
     # =====================================================
     # Health Check
     # =====================================================
@@ -97,4 +112,20 @@ class GroqProvider(BaseProvider):
 
             "max_tokens": self.max_tokens
 
-            }
+        }
+
+    # =====================================================
+    # Provider Info
+    # =====================================================
+
+    def __repr__(self):
+
+        return (
+
+            f"GroqProvider("
+
+            f"model='{self.model}', "
+
+            f"temperature={self.temperature})"
+
+        )

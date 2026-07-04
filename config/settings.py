@@ -9,24 +9,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-import groq
-from langchain_nvidia_ai_endpoints import ChatNVIDIA
-
-# ---------------------------------------------------------
-# Load Environment Variables
-# ---------------------------------------------------------
+# ==========================================================
+# Load Environment
+# ==========================================================
 
 load_dotenv()
 
-# ---------------------------------------------------------
+# ==========================================================
 # Project Root
-# ---------------------------------------------------------
+# ==========================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# ---------------------------------------------------------
-# Data Directories
-# ---------------------------------------------------------
+# ==========================================================
+# Directories
+# ==========================================================
 
 DATA_DIR = PROJECT_ROOT / "data"
 
@@ -38,107 +35,9 @@ CACHE_DIR = DATA_DIR / "cache"
 
 EXPORT_DIR = DATA_DIR / "exports"
 
-# ---------------------------------------------------------
-# AI Models
-# ---------------------------------------------------------
+LOG_DIR = PROJECT_ROOT / "logs"
 
-WHISPER_MODEL = "small"
-
-EMBEDDING_MODEL = "bge-m3:latest"
-
-LLM_MODEL = "llama-3.3-70b-versatile"
-
-
-
-TOP_K = 8
-
-# ---------------------------------------------------------
-# Upload Settings
-# ---------------------------------------------------------
-
-MAX_UPLOAD_SIZE_MB = 1024
-
-# =====================================================
-# Retrieval Settings
-# =====================================================
-
-TOP_K = 8
-
-SEARCH_K = 20
-
-SIMILARITY_THRESHOLD = None
-
-MAX_CONTEXT_CHARS = 12000
-# ---------------------------------------------------------
-# API Keys
-# ---------------------------------------------------------
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
-
-
-# ==========================================================
-# Embedding
-# ==========================================================
-
-EMBEDDING_MODEL = "BAAI/bge-m3"
-
-COLLECTION_NAME = "lecture_rag"
-
-CHROMA_DB_PATH = str(
-
-    DATA_DIR / "chroma_db"
-
-)
-TOP_K = 8
-
-# =====================================================
-# LLM
-# =====================================================
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-GROQ_MODEL = "llama-3.3-70b-versatile"
-
-PRIMARY_PROVIDER= os.getenv("PRIMARY_PROVIDER", "gemini")
-
-TEMPERATURE = 0.2
-
-MAX_TOKENS = 4096
-
-NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
-SECONDARY_PROVIDER = os.getenv("SECONDARY_PROVIDER", "groq")
-THIRD_PROVIDER = os.getenv("THIRD_PROVIDER", "nvidia")
-
-
-NVIDIA_MODEL = os.getenv(
-
-    "NVIDIA_MODEL",
-
-    "deepseek-ai/deepseek-v4-flasht"
-
-)
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-GEMINI_MODEL = os.getenv(
-
-    "GEMINI_MODEL",
-
-    "gemini-2.5-flash"
-
-)
-
-
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "nvidia")
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini")
-
-
-# ---------------------------------------------------------
-# Create Required Directories
-# ---------------------------------------------------------
+# Create directories
 
 for folder in [
 
@@ -150,7 +49,9 @@ for folder in [
 
     CACHE_DIR,
 
-    EXPORT_DIR
+    EXPORT_DIR,
+
+    LOG_DIR
 
 ]:
 
@@ -161,3 +62,251 @@ for folder in [
         exist_ok=True
 
     )
+
+# ==========================================================
+# Upload Settings
+# ==========================================================
+
+MAX_UPLOAD_SIZE_MB = 1024
+
+# ==========================================================
+# Whisper
+# ==========================================================
+
+WHISPER_MODEL = os.getenv(
+
+    "WHISPER_MODEL",
+
+    "small"
+
+)
+
+# ==========================================================
+# Embedding
+# ==========================================================
+
+EMBEDDING_MODEL = os.getenv(
+
+    "EMBEDDING_MODEL",
+
+    "BAAI/bge-m3"
+
+)
+
+COLLECTION_NAME = os.getenv(
+
+    "COLLECTION_NAME",
+
+    "lecture_rag"
+
+)
+
+CHROMA_DB_PATH = str(
+
+    CHROMA_DB_DIR
+
+)
+
+# ==========================================================
+# Retrieval
+# ==========================================================
+
+TOP_K = int(
+
+    os.getenv(
+
+        "TOP_K",
+
+        8
+
+    )
+
+)
+
+SEARCH_K = int(
+
+    os.getenv(
+
+        "SEARCH_K",
+
+        20
+
+    )
+
+)
+
+SIMILARITY_THRESHOLD = None
+
+MAX_CONTEXT_CHARS = int(
+
+    os.getenv(
+
+        "MAX_CONTEXT_CHARS",
+
+        12000
+
+    )
+
+)
+
+# ==========================================================
+# API Keys
+# ==========================================================
+
+GEMINI_API_KEY = os.getenv(
+
+    "GEMINI_API_KEY"
+
+)
+
+GROQ_API_KEY = os.getenv(
+
+    "GROQ_API_KEY"
+
+)
+
+NVIDIA_API_KEY = os.getenv(
+
+    "NVIDIA_API_KEY"
+
+)
+
+# ==========================================================
+# Models
+# ==========================================================
+
+GEMINI_MODEL = os.getenv(
+
+    "GEMINI_MODEL",
+
+    "gemini-2.5-flash"
+
+)
+
+GROQ_MODEL = os.getenv(
+
+    "GROQ_MODEL",
+
+    "llama-3.3-70b-versatile"
+
+)
+
+NVIDIA_MODEL = os.getenv(
+
+    "NVIDIA_MODEL",
+
+    "deepseek-ai/deepseek-v4-flash"
+
+)
+
+# ==========================================================
+# LLM
+# ==========================================================
+
+PRIMARY_PROVIDER = os.getenv(
+
+    "PRIMARY_PROVIDER",
+
+    "gemini"
+
+).lower()
+
+SECONDARY_PROVIDER = os.getenv(
+
+    "SECONDARY_PROVIDER",
+
+    "groq"
+
+).lower()
+
+THIRD_PROVIDER = os.getenv(
+
+    "THIRD_PROVIDER",
+
+    "nvidia"
+
+).lower()
+
+LLM_PROVIDER = PRIMARY_PROVIDER
+
+TEMPERATURE = float(
+
+    os.getenv(
+
+        "TEMPERATURE",
+
+        0.2
+
+    )
+
+)
+
+MAX_TOKENS = int(
+
+    os.getenv(
+
+        "MAX_TOKENS",
+
+        4096
+
+    )
+
+)
+
+# ==========================================================
+# Provider Retry
+# ==========================================================
+
+MAX_RETRY = int(
+
+    os.getenv(
+
+        "MAX_RETRY",
+
+        2
+
+    )
+
+)
+
+PROVIDER_COOLDOWN = int(
+
+    os.getenv(
+
+        "PROVIDER_COOLDOWN",
+
+        300
+
+    )
+
+)
+
+REQUEST_TIMEOUT = int(
+
+    os.getenv(
+
+        "REQUEST_TIMEOUT",
+
+        120
+
+    )
+
+)
+
+# ==========================================================
+# Cache
+# ==========================================================
+
+ENABLE_CACHE = True
+
+# ==========================================================
+# Logging
+# ==========================================================
+
+LOG_LEVEL = os.getenv(
+
+    "LOG_LEVEL",
+
+    "INFO"
+
+)

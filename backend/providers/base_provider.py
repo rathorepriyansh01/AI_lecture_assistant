@@ -3,39 +3,43 @@
 AI Lecture Assistant
 Base Provider
 =========================================================
+
+All LLM Providers must inherit this class.
+
+Supported Providers
+
+✓ Gemini
+✓ Groq
+✓ NVIDIA
 """
 
 from abc import ABC, abstractmethod
+from typing import Any, Dict
 
 
 class BaseProvider(ABC):
 
     """
-    Base class for all LLM providers.
+    Base class for every LLM provider.
 
-    Every provider must implement these methods.
+    Every provider must implement:
+
+        invoke()
+        health_check()
+
     """
 
     def __init__(
-
         self,
-
-        api_key,
-
-        model,
-
-        temperature=0.2,
-
-        max_tokens=2048
-
+        api_key: str,
+        model: str,
+        temperature: float,
+        max_tokens: int
     ):
 
         self.api_key = api_key
-
         self.model = model
-
         self.temperature = temperature
-
         self.max_tokens = max_tokens
 
     # =====================================================
@@ -44,17 +48,17 @@ class BaseProvider(ABC):
 
     @abstractmethod
     def invoke(
-
         self,
-
         prompt: str
-
-    ):
-
+    ) -> str:
         """
-        Send prompt to the model
-        """
+        Generate response from LLM.
 
+        Returns
+        -------
+        str
+            Model response.
+        """
         pass
 
     # =====================================================
@@ -62,15 +66,27 @@ class BaseProvider(ABC):
     # =====================================================
 
     @abstractmethod
-    def health_check(self):
+    def health_check(self) -> Dict[str, Any]:
+        """
+        Returns provider information.
 
+        Example
+        -------
+        {
+            "status": "healthy",
+            "provider": "Gemini",
+            "model": "...",
+            "temperature": 0.2,
+            "max_tokens": 4096
+        }
+        """
         pass
 
     # =====================================================
     # Provider Info
     # =====================================================
 
-    def provider_info(self):
+    def info(self) -> Dict[str, Any]:
 
         return {
 
@@ -92,8 +108,12 @@ class BaseProvider(ABC):
 
         return (
 
-            f"{self.__class__.__name__}"
+            f"{self.__class__.__name__}("
 
-            f"(model={self.model})"
+            f"model='{self.model}', "
+
+            f"temperature={self.temperature}, "
+
+            f"max_tokens={self.max_tokens})"
 
         )
