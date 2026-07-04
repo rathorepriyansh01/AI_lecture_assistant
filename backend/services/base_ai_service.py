@@ -10,6 +10,7 @@ import time
 import logging
 from pathlib import Path
 from abc import ABC
+from config.settings import MAX_CONTEXT_CHARS
 
 from backend.core.llm import LLMManager
 from backend.core.prompt_manager import PromptManager
@@ -175,7 +176,7 @@ class BaseAIService(ABC):
 
         context,
 
-        max_chars=12000
+        max_chars=MAX_CONTEXT_CHARS
 
     ):
 

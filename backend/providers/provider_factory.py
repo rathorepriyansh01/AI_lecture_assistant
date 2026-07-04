@@ -579,7 +579,7 @@ class ProviderFactory:
 
             retries = 0
 
-            while retries <= MAX_RETRY:
+            for retries in range(MAX_RETRY + 1):
 
                 start = time.time()
 
@@ -595,9 +595,11 @@ class ProviderFactory:
 
                     )
 
-                    response = provider.invoke(
+                    if not response:
 
-                        prompt
+                        raise RuntimeError(
+
+                        "Empty response received."
 
                     )
 
@@ -715,21 +717,23 @@ class ProviderFactory:
 
                     if self.should_retry(e):
 
-                        self.add_retry(
+                        if retries < MAX_RETRY:
 
-                            provider_name
+                            self.add_retry(provider_name)
 
-                        )
+                            logger.info(
 
-                        logger.info(
+                            f"Retrying {provider_name.upper()}..."
 
-                            f"Retrying "
+                            )
 
-                            f"{provider_name.upper()}..."
+                            continue
 
-                        )
+                        logger.warning(
 
-                        continue
+                            f"{provider_name.upper()} Retry Limit Reached."
+
+                            )
 
                     # ---------------------------------
                     # Unknown Error

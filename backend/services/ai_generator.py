@@ -339,7 +339,7 @@ class AIGenerator(BaseAIService, ABC):
 
     ):
 
-        start = time.time()
+        start = time()
 
         generation_type = self.validate_type(
 
@@ -421,7 +421,7 @@ class AIGenerator(BaseAIService, ABC):
 
         )
 
-        outputs = []
+        outputs: list[str] = []
 
         # ----------------------------------------
         # Generate

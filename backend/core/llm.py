@@ -61,9 +61,10 @@ class LLMManager:
 
     def __init__(self):
 
-        if LLMManager._factory is not None:
-
+        if hasattr(self, "_initialized"):
             return
+
+        self._initialized = True
 
         logger.info("=" * 70)
         logger.info("Initializing LLM Manager...")
@@ -124,15 +125,23 @@ class LLMManager:
 
         )
 
-        result = self.factory.safe_invoke(
+        
+        try:
+            result = self.factory.safe_invoke(
 
             prompt,
 
             primary=provider
 
         )
+            return result["response"]
 
-        return result["response"]
+        except Exception:
+            logger.exception("LLM Error")
+            raise
+
+        
+        
 
     # =====================================================
     # Health Check
@@ -188,7 +197,8 @@ class LLMManager:
 
     ):
 
-        provider = provider.lower()
+        if not provider:
+            raise ValueError("Provider cannot be empty")
 
         if provider not in [
 
