@@ -42,7 +42,7 @@ def get_metadata(
 
 ):
 
-    result = service.get_metadata(
+    result = service.load(
 
         lecture_id
 

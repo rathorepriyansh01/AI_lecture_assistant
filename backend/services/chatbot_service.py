@@ -221,7 +221,8 @@ class ChatbotService:
     def ask(
         self,
         question: str,
-        lecture_id: str = None
+        lecture_id: str = None,
+        use_cache=True
     ):
 
         logger.info("=" * 70)

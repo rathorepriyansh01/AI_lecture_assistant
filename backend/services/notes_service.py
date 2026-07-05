@@ -6,10 +6,10 @@ Notes Service
 """
 
 import json
-import time
+
 import logging
 from pathlib import Path
-from pathlib import Path
+
 from datetime import datetime
 import time
 
@@ -22,9 +22,11 @@ from backend.utils.metadata_manager import MetadataManager
 logger = logging.getLogger(__name__)
 
 
-class NotesService:
+class NotesService(BaseAIService):
 
     def __init__(self):
+
+        super().__init__()
 
         logger.info("=" * 70)
         logger.info("Initializing Notes Service...")
@@ -36,7 +38,7 @@ class NotesService:
 
         self.cache = CacheManager()
 
-        self.manager = MetadataManager()
+        # self.manager = MetadataManager()
 
         logger.info("Notes Service Ready.")
         
@@ -234,6 +236,7 @@ class NotesService:
         notes_type,
         use_cache=True
     ):
+        self.ensure_pipeline(lecture_id)
         notes_type = self.validate_type(
         notes_type
         )

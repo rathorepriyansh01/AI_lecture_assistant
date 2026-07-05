@@ -9,7 +9,7 @@ Production Version
 import json
 from pathlib import Path
 from datetime import datetime
-
+import shutil
 from config.settings import LECTURES_DIR
 
 
@@ -353,3 +353,30 @@ class MetadataManager:
 
             metadata
         )
+
+
+    from pathlib import Path
+
+    from config.settings import LECTURES_DIR
+
+
+    def delete_lecture(
+        self,
+        lecture_id
+    ):
+
+        lecture_path = Path(LECTURES_DIR) / lecture_id
+
+        if not lecture_path.exists():
+
+            raise FileNotFoundError(
+                f"Lecture not found : {lecture_id}"
+            )
+
+        shutil.rmtree(lecture_path)
+
+        return {
+            "success": True,
+            "message": "Lecture deleted successfully.",
+            "lecture_id": lecture_id
+        }
