@@ -1,0 +1,66 @@
+{
+    "version": {
+        "project_version": "1.0.0",
+        "metadata_version": "1.0",
+        "created_by": "AI Lecture Assistant"
+    },
+    "lecture": {
+        "lecture_id": "8777aec2-c28c-4011-af52-7b084819191a",
+        "lecture_name": "tmp0_tx5c6x",
+        "original_filename": "tmp0_tx5c6x.mp4",
+        "course_name": "",
+        "uploaded_at": "2026-07-05 19:30:25",
+        "last_updated": "2026-07-05 19:47:34"
+    },
+    "pipeline": {
+        "upload_completed": true,
+        "audio_extracted": true,
+        "transcription_completed": true,
+        "chunking_completed": false,
+        "embedding_completed": true,
+        "vector_db_completed": false,
+        "ready_for_chat": false
+    },
+    "files": {
+        "video_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\8777aec2-c28c-4011-af52-7b084819191a\\video.mp4",
+        "audio_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\8777aec2-c28c-4011-af52-7b084819191a\\audio.wav",
+        "transcript_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\8777aec2-c28c-4011-af52-7b084819191a\\transcript.json",
+        "chunk_path": "",
+        "thumbnail_path": ""
+    },
+    "statistics": {
+        "video_duration": 0,
+        "audio_duration": 4807.66,
+        "total_chunks": 454,
+        "total_words": 21815,
+        "total_characters": 0,
+        "language": "",
+        "total_duration": 10041.26,
+        "embedded_chunks": 454
+    },
+    "models": {
+        "whisper_model": "small",
+        "embedding_model": "BAAI/bge-m3",
+        "llm_model": ""
+    },
+    "processing": {
+        "current_stage": "Embedding Completed",
+        "processing_time": 21.81,
+        "last_error": ""
+    },
+    "features": {
+        "summary_generated": true,
+        "notes_generated": true,
+        "quiz_generated": true,
+        "flashcards_generated": false,
+        "mindmap_generated": false
+    },
+    "exports": {
+        "summary_path": "",
+        "notes_path": "",
+        "quiz_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\8777aec2-c28c-4011-af52-7b084819191a\\quiz.md",
+        "flashcards_path": "",
+        "mindmap_path": "",
+        "notes_exam_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\8777aec2-c28c-4011-af52-7b084819191a\\notes_exam.md"
+    }
+}
