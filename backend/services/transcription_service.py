@@ -184,13 +184,17 @@ class TranscriptionService:
 
         end,
 
-        text
+        text,
+
+        lecture_id=None
 
     ):
 
         return {
 
             "lecture_name": lecture_name,
+
+            "lecture_id": lecture_id,
 
             "chunk_id": chunk_id,
 

@@ -17,6 +17,9 @@ from backend.core.prompt_manager import PromptManager
 
 from backend.utils.cache_manager import CacheManager
 from backend.utils.metadata_manager import MetadataManager
+from backend.services.audio_service import AudioService
+from backend.services.transcription_service import TranscriptionService
+from backend.services.embedding_service import EmbeddingService
 
 
 logger = logging.getLogger(__name__)
@@ -39,6 +42,12 @@ class BaseAIService(ABC):
         self.cache = CacheManager()
 
         self.manager = MetadataManager()
+
+        self.audio_service = AudioService()
+
+        self.transcription_service = TranscriptionService()
+
+        self.embedding_service = EmbeddingService()
 
     # =====================================================
     # Health Check
@@ -289,6 +298,113 @@ class BaseAIService(ABC):
             lecture_id,
 
             metadata
+
+        )
+        # =====================================================
+    # Ensure Pipeline
+    # =====================================================
+
+    def ensure_pipeline(
+
+        self,
+
+        lecture_id
+
+    ):
+
+        logger.info("=" * 70)
+        logger.info("Ensuring AI Pipeline...")
+        logger.info("=" * 70)
+
+        metadata = self.load_metadata(
+
+            lecture_id
+
+        )
+
+        pipeline = metadata["pipeline"]
+
+        # ----------------------------------------
+        # Audio
+        # ----------------------------------------
+
+        if not pipeline["audio_extracted"]:
+
+            logger.info(
+
+                "Audio not found. Extracting..."
+
+            )
+
+            self.audio_service.process(
+
+                lecture_id
+
+            )
+
+            metadata = self.load_metadata(
+
+                lecture_id
+
+            )
+
+            pipeline = metadata["pipeline"]
+
+        # ----------------------------------------
+        # Transcript + Chunking
+        # ----------------------------------------
+
+        if not pipeline["transcription_completed"]:
+
+            logger.info(
+
+                "Transcript not found. Generating..."
+
+            )
+
+            self.transcription_service.process(
+
+                lecture_id
+
+            )
+
+            metadata = self.load_metadata(
+
+                lecture_id
+
+            )
+
+            pipeline = metadata["pipeline"]
+
+        # ----------------------------------------
+        # Embeddings
+        # ----------------------------------------
+
+        if not pipeline["embedding_completed"]:
+
+            logger.info(
+
+                "Embeddings not found. Generating..."
+
+            )
+
+            self.embedding_service.process(
+
+                lecture_id
+
+            )
+
+            metadata = self.load_metadata(
+
+                lecture_id
+
+            )
+
+            pipeline = metadata["pipeline"]
+
+        logger.info(
+
+            "Pipeline Ready."
 
         )
     # =====================================================

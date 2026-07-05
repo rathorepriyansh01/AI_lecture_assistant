@@ -586,57 +586,45 @@ class ProviderFactory:
                 try:
 
                     logger.info(
-
                         f"Trying "
-
                         f"{provider_name.upper()} "
-
                         f"(Attempt {retries + 1})"
+                    )
 
+                    # ============================
+                    # Invoke Provider
+                    # ============================
+
+                    response = provider.invoke(
+                        prompt
                     )
 
                     if not response:
 
                         raise RuntimeError(
-
-                        "Empty response received."
-
-                    )
+                            "Empty response received."
+                        )
 
                     latency = round(
-
                         time.time() - start,
-
                         2
-
                     )
 
                     self.add_success(
-
                         provider_name,
-
                         latency
-
                     )
 
                     logger.info(
-
                         f"{provider_name.upper()} "
-
                         f"Success "
-
                         f"({latency}s)"
-
                     )
 
                     return {
-
                         "provider": provider_name,
-
                         "response": response,
-
                         "latency": latency
-
                     }
 
                 except Exception as e:

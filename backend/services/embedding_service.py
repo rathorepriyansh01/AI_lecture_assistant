@@ -209,7 +209,7 @@ class EmbeddingService:
             
             ids.append(
 
-            f"{transcript['lecture_id']}_{chunk['chunk_id']}"
+            f"{lecture_id}_{chunk['chunk_id']}"
 
             )
 
@@ -225,13 +225,13 @@ class EmbeddingService:
 
             )
 
-            lecture_id = metadata["lecture"]["lecture_id"]
+            
 
             metadatas.append({
 
-    "lecture_id": transcript["lecture_id"],
+    "lecture_id": lecture_id,
 
-    "lecture_name": transcript["lecture_name"],
+    "lecture_name": metadata["lecture"]["lecture_name"],
 
     "chunk_id": chunk["chunk_id"],
 
@@ -532,7 +532,7 @@ class EmbeddingService:
             lecture_id
 
         )
-            # =====================================================
+    # =====================================================
     # Process
     # =====================================================
 

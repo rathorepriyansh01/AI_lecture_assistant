@@ -6,16 +6,24 @@ from datetime import datetime
 
 from backend.core.llm import LLMManager
 from backend.core.prompt_manager import PromptManager
+from backend.services.audio_service import AudioService
 from backend.utils.metadata_manager import MetadataManager
+from backend.services.base_ai_service import BaseAIService
+from backend.services.audio_service import AudioService
+
 
 logger = logging.getLogger(__name__)
 
 
-class SummaryService:
+class SummaryService(BaseAIService):
 
     def __init__(self):
+        
+        super().__init__()
+        
         from backend.utils.cache_manager import CacheManager
         self.cache = CacheManager()
+        
 
         logger.info("=" * 70)
         logger.info("Initializing Summary Service...")
@@ -25,7 +33,7 @@ class SummaryService:
 
         self.prompt_manager = PromptManager()
 
-        self.manager = MetadataManager()
+        
 
         logger.info("Summary Service Ready.")
 
@@ -226,6 +234,8 @@ class SummaryService:
         use_cache=True
 
     ):
+        
+        self.ensure_pipeline(lecture_id)
         start = time.time()
         logger.info("=" * 70)
         logger.info("Generating Summary...")

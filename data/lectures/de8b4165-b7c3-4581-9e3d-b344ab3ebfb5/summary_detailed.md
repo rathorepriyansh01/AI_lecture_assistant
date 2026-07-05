@@ -1,0 +1,1 @@
+The lecture focuses on risk-derivation for type 2 diabetes, noting that 25% of people in the U.S. have undiagnosed type 2 diabetes.

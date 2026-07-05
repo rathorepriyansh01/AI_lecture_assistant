@@ -10,12 +10,12 @@ Main Entry Point
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.api.routes.upload import router as upload_router
-from backend.api.routes.summary import router as summary_router
-from backend.api.routes.notes import router as notes_router
-from backend.api.routes.quiz import router as quiz_router
-from backend.api.routes.chat import router as chat_router
-from backend.api.routes.metadata import router as metadata_router
+from backend.api.schema.upload import router as upload_router
+from backend.api.schema.summary import router as summary_router
+from backend.api.schema.notes import router as notes_router
+from backend.api.schema.quiz import router as quiz_router
+from backend.api.schema.chat import router as chat_router
+from backend.api.schema.metadata import router as metadata_router
 
 from backend.api.exceptions import register_exception_handlers
 from backend.api.middleware import LoggingMiddleware

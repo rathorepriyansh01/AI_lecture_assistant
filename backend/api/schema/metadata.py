@@ -7,8 +7,7 @@ Metadata API
 
 from fastapi import (
     APIRouter,
-    Depends,
-    utils
+    Depends
 )
 
 from backend.api.responses import APIResponse
@@ -43,7 +42,7 @@ def get_metadata(
 
 ):
 
-    result = utils.(
+    result = service.get_metadata(
 
         lecture_id
 

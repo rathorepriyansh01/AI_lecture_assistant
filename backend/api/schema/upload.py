@@ -61,7 +61,7 @@ async def upload_lecture(
 
             temp_path = temp_file.name
 
-        result = upload_service.process(
+        result = upload_service.create_lecture(
 
             temp_path
 
