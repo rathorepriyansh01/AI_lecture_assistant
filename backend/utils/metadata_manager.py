@@ -19,6 +19,15 @@ class MetadataManager:
 
         self.lectures_dir = Path(LECTURES_DIR)
 
+    
+    def health_check(self):
+
+        return {
+
+        "status": "healthy"
+
+    }
+
     # =====================================================
     # Metadata Path
     # =====================================================
@@ -380,3 +389,123 @@ class MetadataManager:
             "message": "Lecture deleted successfully.",
             "lecture_id": lecture_id
         }
+    
+    # =====================================================
+    # List Lectures
+    # =====================================================
+
+    def list_lectures(self):
+
+        lectures = []
+
+        for lecture_folder in self.lectures_dir.iterdir():
+
+            if not lecture_folder.is_dir():
+
+                continue
+
+            metadata_path = lecture_folder / "metadata.json"
+
+            if not metadata_path.exists():
+
+                continue
+
+            try:
+
+                with open(
+
+                    metadata_path,
+
+                    "r",
+
+                    encoding="utf-8"
+
+                ) as f:
+
+                    metadata = json.load(f)
+
+                lecture = metadata.get(
+
+                    "lecture",
+
+                    {}
+
+                )
+
+                statistics = metadata.get(
+
+                    "statistics",
+
+                    {}
+
+                )
+
+                pipeline = metadata.get(
+
+                    "pipeline",
+
+                    {}
+
+                )
+
+                lectures.append({
+
+                    "lecture_id": lecture.get(
+
+                        "lecture_id"
+
+                    ),
+
+                    "lecture_name": lecture.get(
+
+                        "lecture_name"
+
+                    ),
+
+                    "uploaded_at": lecture.get(
+
+                        "uploaded_at"
+
+                    ),
+
+                    "last_updated": lecture.get(
+
+                        "last_updated"
+
+                    ),
+
+                    "language": statistics.get(
+
+                        "language"
+
+                    ),
+
+                    "total_chunks": statistics.get(
+
+                        "total_chunks"
+
+                    ),
+
+                    "ready_for_chat": pipeline.get(
+
+                        "ready_for_chat",
+
+                        False
+
+                    )
+
+                })
+
+            except Exception:
+
+                continue
+
+        lectures.sort(
+
+            key=lambda x: x["uploaded_at"],
+
+            reverse=True
+
+        )
+
+        return lectures

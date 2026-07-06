@@ -23,6 +23,53 @@ router = APIRouter(
     tags=["Metadata"]
 
 )
+# ==========================================================
+# Health Check
+# ==========================================================
+
+@router.get("/health")
+def health(
+
+    service: MetadataManager = Depends(
+
+        get_metadata_service
+
+    )
+
+):
+
+    return APIResponse.success(
+
+        message="Metadata Service Healthy",
+
+        data=service.health_check()
+
+    )
+
+# ==========================================================
+# List Lectures
+# ==========================================================
+
+@router.get("/lectures")
+def list_lectures(
+
+    service: MetadataManager = Depends(
+
+        get_metadata_service
+
+    )
+
+):
+
+    result = service.list_lectures()
+
+    return APIResponse.success(
+
+        message="Lectures fetched successfully.",
+
+        data=result
+
+    )
 
 
 # ==========================================================
@@ -89,25 +136,3 @@ def delete_lecture(
     )
 
 
-# ==========================================================
-# Health Check
-# ==========================================================
-
-@router.get("/health")
-def health(
-
-    service: MetadataManager = Depends(
-
-        get_metadata_service
-
-    )
-
-):
-
-    return APIResponse.success(
-
-        message="Metadata Service Healthy",
-
-        data=service.health_check()
-
-    )
