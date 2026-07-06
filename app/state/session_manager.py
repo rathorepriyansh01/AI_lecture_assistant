@@ -189,3 +189,14 @@ class SessionManager:
             del st.session_state[key]
 
         SessionManager.initialize()
+
+    @staticmethod
+    def navigate(page):
+
+        SessionManager.set(
+
+            "selected_page",
+
+            page
+
+        )
