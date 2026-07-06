@@ -12,7 +12,7 @@ Responsibilities
 
 import streamlit as st
 
-from app.config.setting import APP_NAME, APP_VERSION
+from app.config.settings import APP_NAME, APP_VERSION
 from state.session_manager import SessionManager
 
 

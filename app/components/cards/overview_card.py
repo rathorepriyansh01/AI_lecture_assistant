@@ -18,7 +18,7 @@ from datetime import datetime
 
 import streamlit as st
 
-from app.components.cards.base_card import BaseCard
+from components.cards.base_card import BaseCard
 
 
 class OverviewCard:

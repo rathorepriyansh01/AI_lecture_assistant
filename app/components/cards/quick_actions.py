@@ -13,8 +13,8 @@ Responsibilities
 
 import streamlit as st
 
-from app.components.cards.base_card import BaseCard
-from app.state.session_manager import SessionManager
+from components.cards.base_card import BaseCard
+from state.session_manager import SessionManager
 
 
 class QuickActions:

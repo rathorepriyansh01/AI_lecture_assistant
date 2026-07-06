@@ -9,7 +9,7 @@ Wrapper for Lecture Endpoints
 
 import logging
 
-from app.api.base_client import BaseAPIClient
+from api.base_client import BaseAPIClient
 
 logger = logging.getLogger(__name__)
 

@@ -15,7 +15,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from config.setting import (
+from app.config.settings import (
 
     APP_NAME,
 

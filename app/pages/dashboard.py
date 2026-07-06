@@ -13,14 +13,14 @@ Responsibilities
 
 import streamlit as st
 
-from app.components.layout.topbar import Topbar
-from app.components.common.lecture_selector import LectureSelector
+from components.layout.topbar import Topbar
+from components.common.lecture_selector import LectureSelector
 
-from app.components.cards.overview_card import OverviewCard
-from app.components.cards.processing_card import ProcessingCard
-from app.components.cards.quick_actions import QuickActions
+from components.cards.overview_card import OverviewCard
+from components.cards.processing_card import ProcessingCard
+from components.cards.quick_actions import QuickActions
 
-from app.state.session_manager import SessionManager
+from state.session_manager import SessionManager
 
 
 class Dashboard:

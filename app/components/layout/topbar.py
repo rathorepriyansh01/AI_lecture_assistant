@@ -13,7 +13,7 @@ Responsibilities
 
 import streamlit as st
 
-from config.settings import (
+from app.config.settings import (
     APP_NAME,
     APP_VERSION
 )

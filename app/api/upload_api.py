@@ -10,7 +10,7 @@ Wrapper for Upload Endpoints
 import logging
 from pathlib import Path
 
-from app.api.base_client import BaseAPIClient
+from api.base_client import BaseAPIClient
 
 logger = logging.getLogger(__name__)
 
