@@ -18,7 +18,7 @@ from pages.dashboard import Dashboard
 from pages.upload import UploadPage
 
 # Future Pages
-# from app.pages.summary import SummaryPage
+from pages.summary import SummaryPage
 # from app.pages.notes import NotesPage
 # from app.pages.quiz import QuizPage
 # from app.pages.chat import ChatPage
@@ -35,7 +35,7 @@ class AppRouter:
 
             "Upload": UploadPage(),
 
-            # "Summary": SummaryPage(),
+            "Summary": SummaryPage(),
             # "Notes": NotesPage(),
             # "Quiz": QuizPage(),
             # "Chat": ChatPage(),
