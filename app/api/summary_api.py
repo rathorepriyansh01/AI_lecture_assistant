@@ -31,7 +31,7 @@ class SummaryAPI(BaseAPIClient):
 
         summary_type="short",
 
-        use_cache=True
+        use_cache=False
 
     ):
 

@@ -26,6 +26,8 @@ class LectureSelector:
 
         self.api = LectureAPI()
 
+    
+
     # =====================================================
     # Render
     # =====================================================
@@ -34,102 +36,65 @@ class LectureSelector:
 
         response = self.api.list_lectures()
 
-        lectures = response.get(
-
-            "data",
-
-            []
-
-        )
+        lectures = response.get("data", [])
 
         if not lectures:
 
             st.info(
-
                 "No lectures available. Please upload a lecture."
-
             )
-
             return None
 
         lecture_names = [
-
             lecture["lecture_name"]
-
             for lecture in lectures
-
         ]
 
-        current = SessionManager.get(
-
-            "lecture_name"
-
-        )
+        current = SessionManager.get("lecture_name")
 
         index = 0
 
         if current in lecture_names:
 
-            index = lecture_names.index(
-
-                current
-
-            )
+            index = lecture_names.index(current)
 
         selected_name = st.selectbox(
-
             "Select Lecture",
-
             lecture_names,
-
             index=index
-
         )
 
         selected = next(
-
-            lecture
-
-            for lecture in lectures
-
-            if lecture["lecture_name"] == selected_name
-
+            (
+                lecture
+                for lecture in lectures
+                if lecture["lecture_name"] == selected_name
+            ),
+            None
         )
 
-        # -----------------------------------------
-        # Update Session
-        # -----------------------------------------
+        if selected is None:
+
+            st.error("Lecture not found.")
+
+            return None
 
         SessionManager.set_lecture(
-
             selected["lecture_id"],
-
             selected["lecture_name"]
-
         )
 
-        # -----------------------------------------
-        # Load Metadata
-        # -----------------------------------------
-
         metadata = self.api.get_metadata(
-
             selected["lecture_id"]
-
         )
 
         SessionManager.set(
-
             "metadata",
-
             metadata["data"]
-
         )
 
         logger.info(
-
             f"Lecture Selected : {selected_name}"
-
         )
 
         return metadata["data"]

@@ -58,7 +58,7 @@ class SessionManager:
 
             "processing": False,
 
-            "backend_status": None
+            "backend_status": True
 
         }
 

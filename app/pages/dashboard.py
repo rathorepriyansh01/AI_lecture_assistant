@@ -1,15 +1,15 @@
-"""
-=========================================================
-AI Lecture Assistant
-Dashboard
-Production Version
-=========================================================
+# """
+# =========================================================
+# AI Lecture Assistant
+# Dashboard
+# Production Version
+# =========================================================
 
-Responsibilities
-----------------
-1. Render Dashboard Layout
-2. Assemble Dashboard Components
-"""
+# Responsibilities
+# ----------------
+# 1. Render Dashboard Layout
+# 2. Assemble Dashboard Components
+# """
 
 import streamlit as st
 
@@ -94,3 +94,6 @@ class Dashboard:
         # ---------------------------------------------
 
         QuickActions.render()
+
+page = Dashboard()
+page.render()

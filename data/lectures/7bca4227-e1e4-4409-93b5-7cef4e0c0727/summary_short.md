@@ -1,0 +1,1 @@
+The lecture focuses on identifying risk factors for type 2 diabetes, particularly targeting the 25% of undiagnosed cases in the United States.

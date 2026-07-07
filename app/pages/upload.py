@@ -32,18 +32,12 @@ class UploadPage:
     # =====================================================
 
     def render(self):
-
-        st.write("STEP 1")
+        
 
         Topbar.render()
 
-        st.write("STEP 2")
-
-        response = self.upload.render()
-
-        st.write("STEP 3")
-
-
+        
+        
         response = self.upload.render()
 
         if response is None:
@@ -93,33 +87,5 @@ class UploadPage:
             )
 
             st.rerun()
-# import streamlit as st
-
-# st.write("UPLOAD PAGE STARTED")
-
-# from components.layout.topbar import Topbar
-# st.write("TOPBAR IMPORTED")
-
-# from components.cards.upload_card import UploadCard
-# st.write("UPLOAD CARD IMPORTED")
-
-# from state.session_manager import SessionManager
-# st.write("SESSION IMPORTED")
-
-
-# class UploadPage:
-
-#     def __init__(self):
-#         self.upload = UploadCard()
-
-#     def render(self):
-
-#         st.write("RENDER START")
-
-#         Topbar.render()
-
-#         st.write("TOPBAR DONE")
-
-#         response = self.upload.render()
-
-#         st.write("UPLOAD DONE")
+page = UploadPage()
+page.render()
