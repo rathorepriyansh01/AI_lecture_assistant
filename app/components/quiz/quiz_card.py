@@ -214,7 +214,7 @@ class QuizCard:
             lecture_id=lecture_id,
             difficulty=difficulty,
             total_questions=total_questions,
-            use_cache=True
+            use_cache=False
         )
 
             st.subheader("API Response")

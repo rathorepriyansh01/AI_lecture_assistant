@@ -18,123 +18,159 @@ import re
 
 class QuizParser:
 
-    # =====================================================
-    # Parse Quiz
-    # =====================================================
-
     @staticmethod
     def parse(markdown: str):
 
-        questions = []
+        if not markdown:
 
+            return []
+
+        questions = []
         answer_key = {}
 
-        # ---------------------------------------------
-        # Split Answer Key
-        # ---------------------------------------------
+        # --------------------------------------------------
+        # Split Quiz and Answer Key
+        # --------------------------------------------------
 
         if "**Answer Key:**" in markdown:
 
             quiz_text, answer_text = markdown.split(
-
                 "**Answer Key:**",
-
                 1
-
             )
 
         else:
 
             quiz_text = markdown
-
             answer_text = ""
 
-        # ---------------------------------------------
+        # --------------------------------------------------
         # Parse Answer Key
-        # ---------------------------------------------
+        # --------------------------------------------------
 
-        answer_pattern = re.compile(
+        for line in answer_text.splitlines():
 
-            r"(\d+)\.\s+\*\*([a-dA-D])\)"
+            line = line.strip()
 
-        )
+            match = re.match(
 
-        for match in answer_pattern.finditer(answer_text):
+                r"(\d+)\.\s*\*\*([a-dA-D])\)",
 
-            answer_key[int(match.group(1))] = (
-
-                match.group(2).lower()
+                line
 
             )
 
-        # ---------------------------------------------
+            if match:
+
+                answer_key[int(match.group(1))] = (
+
+                    match.group(2).lower()
+
+                )
+
+        # --------------------------------------------------
         # Parse Questions
-        # ---------------------------------------------
+        # --------------------------------------------------
 
-        question_pattern = re.compile(
+        current = None
 
-            r"\*\*(\d+)\.\s*(.*?)\*\*(.*?)"
-            r"(?=\n\*\*\d+\.|\Z)",
+        for raw in quiz_text.splitlines():
 
-            re.S
+            line = raw.strip()
 
-        )
+            if not line:
 
-        option_pattern = re.compile(
+                continue
 
-            r"([a-d])\)\s+(.*)"
+            # ------------------------------------------
+            # Skip headings
+            # ------------------------------------------
 
-        )
+            if line.startswith("---"):
 
-        for match in question_pattern.finditer(quiz_text):
+                continue
 
-            question_id = int(
+            if line.lower().startswith("here are"):
 
-                match.group(1)
+                continue
+
+            if "Multiple Choice Questions" in line:
+
+                continue
+
+            # ------------------------------------------
+            # Question
+            # ------------------------------------------
+
+            q = re.match(
+
+                r"\*\*(\d+)\.\s*(.*?)\*\*$",
+
+                line
 
             )
 
-            question = match.group(2).strip()
+            if q:
 
-            body = match.group(3)
+                if current:
 
-            options = []
+                    questions.append(current)
 
-            labels = []
+                current = {
 
-            for opt in option_pattern.finditer(body):
+                    "id": int(q.group(1)),
 
-                labels.append(
+                    "question": q.group(2).strip(),
 
-                    opt.group(1)
+                    "options": [],
 
-                )
+                    "labels": [],
 
-                options.append(
-
-                    opt.group(2).strip()
-
-                )
-
-            questions.append(
-
-                {
-
-                    "id": question_id,
-
-                    "question": question,
-
-                    "labels": labels,
-
-                    "options": options,
-
-                    "correct_answer": answer_key.get(
-
-                        question_id
-
-                    )
+                    "correct_answer": None
 
                 }
+
+                continue
+
+            # ------------------------------------------
+            # Option
+            # ------------------------------------------
+
+            o = re.match(
+
+                r"([a-dA-D])\)\s+(.*)",
+
+                line
+
+            )
+
+            if o and current:
+
+                current["labels"].append(
+
+                    o.group(1).lower()
+
+                )
+
+                current["options"].append(
+
+                    o.group(2).strip()
+
+                )
+
+        if current:
+
+            questions.append(current)
+
+        # --------------------------------------------------
+        # Attach Answer Key
+        # --------------------------------------------------
+
+        for q in questions:
+
+            q["correct_answer"] = answer_key.get(
+
+                q["id"]
 
             )
 
