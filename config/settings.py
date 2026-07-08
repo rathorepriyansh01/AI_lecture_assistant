@@ -179,7 +179,7 @@ GEMINI_MODEL = os.getenv(
 
     "GEMINI_MODEL",
 
-    "gemini-2.5-flash"
+    "gemini-3.5-flash"
 
 )
 
@@ -195,7 +195,7 @@ NVIDIA_MODEL = os.getenv(
 
     "NVIDIA_MODEL",
 
-    "deepseek-ai/deepseek-v4-flash"
+    "mistralai/mistral-medium-3.5-128b"
 
 )
 

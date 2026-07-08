@@ -1,94 +1,69 @@
-Here are multiple-choice questions based on the provided lecture transcript:
+Here are multiple-choice questions based on the provided lecture transcript, complete with answer keys and explanations.
 
 ---
 
-**Multiple Choice Questions: Machine Learning for Healthcare - Lecture 1**
+### **Question 1: History of AI in Medicine (MYCIN)**
+In the 1970s, Stanford developed the MYCIN system, which was one of the earliest clinical applications of artificial intelligence. What was the primary goal of this system?
+* **A)** To predict the length of stay for psychiatric inpatients.
+* **B)** To identify bacteria causing infections and recommend appropriate therapy.
+* **C)** To automatically extract chief complaints from free-text clinical notes.
+* **D)** To diagnose chronic kidney disease stages using creatinine levels.
 
-**1. According to the lecture, what are the primary issues with healthcare in the United States that machine learning aims to address?**
-    a) Healthcare costs are too low, and there's an oversupply of clinicians.
-    b) Chronic diseases are often diagnosed late and poorly managed, medical errors are frequent, and costs are excessively high.
-    c) Patients are too healthy, leading to a lack of data for research.
-    d) The healthcare system is perfectly efficient, but machine learning is needed for minor improvements.
-
-**2. Which of the following was a key reason why early AI systems in medicine, like MYCIN and Internist-1, despite showing promise, failed to translate into widespread clinical care?**
-    a) They were too accurate, making clinicians feel redundant.
-    b) They were designed to solve problems that clinicians already handled perfectly.
-    c) They did not fit well into existing clinical workflows, required manual data input, and were difficult to maintain and generalize.
-    d) The technology was too advanced for the time, and no one understood how to use it.
-
-**3. The lecture identifies "data" as a major opportunity for machine learning in healthcare today. What significant policy initiative contributed to the dramatic increase in electronic medical record (EMR) adoption in the US?**
-    a) The Affordable Care Act (ACA)
-    b) The Precision Medicine Initiative
-    c) An economic stimulus package initiated by President Obama, allocating billions for EMR purchases.
-    d) The establishment of the National Health Service (NHS)
-
-**4. Which of the following publicly available datasets, created at MIT, is highlighted as a crucial resource for machine learning research in intensive care units?**
-    a) TruVen Market Scan Database
-    b) All of Us Initiative
-    c) ImageNet
-    d) MIMIC database
-
-**5. Standardized health data vocabularies are crucial for machine learning in healthcare. Which system is primarily used in the United States for coding diagnoses on insurance claims and medical bills?**
-    a) LOINC
-    b) NDC (National Drug Codes)
-    c) ICD-9/ICD-10
-    d) UMLS (Unified Medical Language System)
-
-**6. The lecture mentions several breakthroughs in machine learning that are relevant to healthcare. Which type of algorithm is particularly important for addressing the challenge of having a large amount of data but very little *labeled* data in healthcare?**
-    a) Supervised prediction algorithms
-    b) Unsupervised and semi-supervised learning algorithms
-    c) Deterministic algorithms
-    d) Signal processing techniques
-
-**7. In the context of the emergency department, the lecture describes an ML-driven system designed to improve the quality of "chief complaints." How does this system primarily achieve its goal?**
-    a) By forcing clinicians to select from a very long, static dropdown list of complaints.
-    b) By automatically predicting the five most likely chief complaints based on initial patient notes and vital signs, and offering contextual autocomplete.
-    c) By completely eliminating the need for chief complaints, as ML can infer it.
-    d) By requiring patients to input their own chief complaints directly into the system.
-
-**8. The lecture discusses various "players" in the healthcare ecosystem. Which entity is responsible for both paying for and providing healthcare services in a government-run system like the UK's National Health Service (NHS)?**
-    a) Commercial health insurance companies
-    b) Pharmaceutical industry
-    c) The government (as both payer and provider)
-    d) Individual patients directly
-
-**9. One of the unique challenges of deploying machine learning in healthcare, as highlighted in the lecture, is the need for "robust algorithms that don't screw up." This is primarily due to:**
-    a) The high cost of developing healthcare software.
-    b) The fact that healthcare decisions often involve life or death consequences.
-    c) The difficulty in finding enough training data.
-    d) The lack of interest from the tech industry in healthcare.
-
-**10. The lecture emphasizes that many questions in healthcare are "causal in nature," especially when considering treatment strategies. Which machine learning approaches are mentioned as increasingly being used to learn treatment policies in this context?**
-    a) Supervised prediction and clustering
-    b) Signal processing and computer vision
-    c) Causal inference and reinforcement learning
-    d) Text matching and contextual autocomplete
-
-**11. A significant logistical challenge to doing machine learning in healthcare, particularly in the US, is the issue of "missing data." What is a primary reason cited for this challenge related to patient data?**
-    a) Patients rarely visit doctors, so there's little data to collect.
-    b) Data doesn't tend to follow people when they change providers or payers (e.g., due to job changes).
-    c) Hospitals intentionally delete old patient records to save storage space.
-    d) Most healthcare data is still recorded on paper and never digitized.
-
-**12. The lecture concludes by noting that machine learning in healthcare is a "young field." Which of the following is identified as a major challenge currently facing research in this domain?**
-    a) Too many established benchmarks and publication venues.
-    b) A lack of industry interest and funding.
-    c) Reproducibility issues due to limited data access and benchmarks.
-    d) Algorithms are already too perfect, leaving no room for improvement.
+**Correct Answer:** **B) To identify bacteria causing infections and recommend appropriate therapy.**
+* **Explanation:** According to the lecture, the goal of the MYCIN system "was to try to identify bacteria that might cause infection, and then to try to guide what would be the appropriate therapy for that bacteria."
 
 ---
 
-**Answer Key:**
+### **Question 2: Translation Challenges of Early AI Systems**
+According to the lecture, what was one of the primary reasons why highly effective 1980s AI systems, such as Internist-1 (Quick Medical Reference), failed to translate into actual clinical care?
+* **A)** They had a success rate of less than 30% when evaluated by experts.
+* **B)** They required expensive GPU hardware that was unavailable at the time.
+* **C)** There was a significant mismatch between the input they expected and existing clinical workflows.
+* **D)** The medical community completely banned the use of computer-assisted diagnosis.
 
-1.  **b)** Chronic diseases are often diagnosed late and poorly managed, medical errors are frequent, and costs are excessively high.
-2.  **c)** They did not fit well into existing clinical workflows, required manual data input, and were difficult to maintain and generalize.
-3.  **c)** An economic stimulus package initiated by President Obama, allocating billions for EMR purchases.
-4.  **d)** MIMIC database
-5.  **c)** ICD-9/ICD-10
-6.  **b)** Unsupervised and semi-supervised learning algorithms
-7.  **b)** By automatically predicting the five most likely chief complaints based on initial patient notes and vital signs, and offering contextual autocomplete.
-8.  **c)** The government (as both payer and provider)
-9.  **b)** The fact that healthcare decisions often involve life or death consequences.
-10. **c)** Causal inference and reinforcement learning
-11. **b)** Data doesn't tend to follow people when they change providers or payers (e.g., due to job changes).
-12. **c)** Reproducibility issues due to limited data access and benchmarks.
+**Correct Answer:** **C) There was a significant mismatch between the input they expected and existing clinical workflows.**
+* **Explanation:** Sontag explains that these early systems were designed to solve narrow problems and "there was a big gap between the input they expected and the current clinical workflows." Clinicians had to manually type structured symptoms into a mainframe computer, which took too much time.
+
+---
+
+### **Question 3: Policy and EMR Adoption**
+What major policy initiative in the United States catalyzed the dramatic increase in hospital adoption of Electronic Medical Records (EMRs) from under 10% in 2008 to over 80% by 2015?
+* **A)** The Precision Medicine Initiative (All of Us)
+* **B)** An economic stimulus package allocating approximately $30 billion for EMR purchases
+* **C)** The nationwide rollout of the ICD-10 coding system
+* **D)** The creation of the Fast Healthcare Interoperability Resources (FHIR) standard
+
+**Correct Answer:** **B) An economic stimulus package allocating approximately $30 billion for EMR purchases**
+* **Explanation:** The transcript notes that as part of an economic stimulus package initiated by President Obama, "there was something like $30 billion allocated to hospitals purchasing electronic medical records," which caused adoption to increase dramatically.
+
+---
+
+### **Question 4: Medical Data Standards**
+Which of the following statements accurately describes a medical data standard mentioned in the lecture?
+* **A)** **LOINC** is a standardized system used to encode pharmacy national drug codes.
+* **B)** **OMOP** is an ontology with millions of medical concepts used to map free text.
+* **C)** **FHIR** is a common data model used primarily for insurance claims databases.
+* **D)** **ICD-10** is a highly detailed system used to code diagnoses.
+
+**Correct Answer:** **D) ICD-10 is a highly detailed system used to code diagnoses.**
+* **Explanation:** The transcript states that diagnoses are coded in a standardized system called ICD-9 or ICD-10. Sontag notes that ICD-10 is highly detailed, even including codes for specific events like being "bitten by a turtle." (LOINC is for lab tests, FHIR is an API standard, and OMOP is a common data model).
+
+---
+
+### **Question 5: Redesigning the Emergency Department Workflow**
+In the machine learning system deployed by Sontag's group at Beth Israel Deaconess Medical Center to improve "chief complaints," how was the clinical workflow redesigned?
+* **A)** The triage nurse types the chief complaint first, and the system automatically orders lab tests.
+* **B)** The chief complaint is assigned last, using a machine learning algorithm to predict and prioritize standardized options based on vitals and a short clinical note.
+* **C)** The system uses speech recognition to record the entire patient-doctor conversation and bypasses the nurse entirely.
+* **D)** The system completely eliminated the chief complaint field and replaced it with a deep learning EKG analyzer.
+
+**Correct Answer:** **B) The chief complaint is assigned last, using a machine learning algorithm to predict and prioritize standardized options based on vitals and a short clinical note.**
+* **Explanation:** Sontag explains that they changed the workflow so that the chief complaint is the *last* thing assigned. First, the nurse takes vitals and writes a short note. The machine learning algorithm uses this data to predict and display the five most likely standardized chief complaints, which the nurse can easily select.
+
+---
+
+### **Question 6: Unique Challenges of Healthcare ML (Censoring)**
+In the context of healthcare machine learning, what does "censoring" refer to?
+* **A)** The removal of patient identifiers (like names and Social Security numbers) to protect privacy.
+* **B)** Having data for patients only within small windows of time, such as not knowing when a patient died because they were still alive at the end of the study period.
+* **C

@@ -15,7 +15,7 @@ Responsibilities
 from state.session_manager import SessionManager
 
 from components.layout.topbar import Topbar
-from app.components.quiz.quiz_card import QuizCard
+from components.quiz.quiz_card import QuizCard
 
 
 class QuizPage:

@@ -1,29 +1,18 @@
-"""
-=========================================================
-AI Lecture Assistant
-Quiz Card
-Production Version
-=========================================================
-
-Responsibilities
-----------------
-1. Generate Quiz
-2. Parse Quiz
-3. Display Interactive Quiz
-4. Calculate Score
-"""
-
-import logging
-
-import streamlit as st
-
 from api.quiz_api import QuizAPI
+
 from components.cards.base_card import BaseCard
+
+from components.quiz.quiz_settings import QuizSettings
+from components.quiz.quiz_player import QuizPlayer
+from components.quiz.question_palette import QuestionPalette
+from components.quiz.quiz_result import QuizResult
+from components.quiz.review_answers import ReviewAnswers
+
 from state.session_manager import SessionManager
 from utils.quiz_parser import QuizParser
 
-logger = logging.getLogger(__name__)
-
+import streamlit as st
+import logging
 
 class QuizCard:
 
@@ -31,10 +20,56 @@ class QuizCard:
 
         self.api = QuizAPI()
 
-    # =====================================================
-    # Render
-    # =====================================================
+        self.settings = QuizSettings()
 
+        self.player = QuizPlayer()
+
+        self.palette = QuestionPalette()
+
+        self.result = QuizResult()
+
+        self.review = ReviewAnswers()
+
+    def calculate_score(self, quiz):
+
+        answers = SessionManager.get(
+
+            "quiz_answers",
+
+            {}
+
+        )
+
+        score = 0
+
+        for question in quiz:
+
+            user_answer = answers.get(
+
+                question["id"]
+
+            )
+
+            if not user_answer:
+
+                continue
+
+            correct = question["options"][
+
+                question["labels"].index(
+
+                    question["correct_answer"]
+
+                )
+
+            ]
+
+            if user_answer == correct:
+
+                score += 1
+
+        return score
+    
     def render(self):
 
         BaseCard.start(
@@ -51,7 +86,7 @@ class QuizCard:
 
             BaseCard.warning(
 
-                "Please select a lecture first."
+                "Please select a lecture."
 
             )
 
@@ -59,51 +94,17 @@ class QuizCard:
 
             return
 
-        difficulty = st.selectbox(
+        settings = self.settings.render()
 
-            "Difficulty",
-
-            [
-
-                "easy",
-
-                "medium",
-
-                "hard"
-
-            ]
-
-        )
-
-        total_questions = st.slider(
-
-            "Total Questions",
-
-            min_value=5,
-
-            max_value=30,
-
-            value=10,
-
-            step=5
-
-        )
-
-        if st.button(
-
-            "🧠 Generate Quiz",
-
-            use_container_width=True
-
-        ):
+        if settings["generate"]:
 
             self.generate_quiz(
 
                 lecture["lecture_id"],
 
-                difficulty,
+                settings["difficulty"],
 
-                total_questions
+                settings["total_questions"]
 
             )
 
@@ -113,9 +114,75 @@ class QuizCard:
 
         )
 
-        if quiz:
+        if not quiz:
 
-            self.render_quiz(
+            BaseCard.end()
+
+            return
+
+        self.player.render(
+
+            quiz
+
+        )
+
+        self.palette.render(
+
+            quiz
+
+        )
+
+        st.divider()
+
+        if st.button(
+
+            "✅ Submit Quiz",
+
+            type="primary",
+
+            use_container_width=True
+
+        ):
+
+            SessionManager.set(
+
+                "quiz_submitted",
+
+                True
+
+            )
+
+            st.rerun()
+
+        if SessionManager.get(
+
+            "quiz_submitted"
+
+        ):
+
+            score = self.calculate_score(
+
+                quiz
+
+            )
+
+            SessionManager.set(
+
+                "quiz_score",
+
+                score
+
+            )
+
+            self.result.render(
+
+                score,
+
+                len(quiz)
+
+            )
+
+            self.review.render(
 
                 quiz
 
@@ -123,21 +190,17 @@ class QuizCard:
 
         BaseCard.end()
 
-    # =====================================================
-    # Generate Quiz
-    # =====================================================
-
     def generate_quiz(
 
-        self,
+    self,
 
-        lecture_id,
+    lecture_id,
 
-        difficulty,
+    difficulty,
 
-        total_questions
+    total_questions
 
-    ):
+):
 
         try:
 
@@ -147,23 +210,33 @@ class QuizCard:
 
             ):
 
-                response = self.api.generate(
+               response = self.api.generate(
+            lecture_id=lecture_id,
+            difficulty=difficulty,
+            total_questions=total_questions,
+            use_cache=True
+        )
 
-                    lecture_id=lecture_id,
+            st.subheader("API Response")
+            st.json(response)
 
-                    difficulty=difficulty,
+            quiz = QuizParser.parse(response["data"]["quiz"])
 
-                    total_questions=total_questions,
+            st.write(type(quiz))
+            st.write(len(quiz))
+            st.write(quiz)
 
-                    use_cache=False
+            st.subheader("Parsed Quiz")
+            st.write(quiz)
 
-                )
+            SessionManager.set("quiz", quiz)
 
-            quiz_markdown = response["data"]["quiz"]
+            st.subheader("Quiz in Session")
+            st.write(SessionManager.get("quiz"))
 
             quiz = QuizParser.parse(
 
-                quiz_markdown
+            response["data"]["quiz"]
 
             )
 
@@ -172,6 +245,30 @@ class QuizCard:
                 "quiz",
 
                 quiz
+
+            )
+
+            SessionManager.set(
+
+                "quiz_answers",
+
+                {}
+
+            )
+
+            SessionManager.set(
+
+                "current_question",
+
+                0
+
+            )
+
+            SessionManager.set(
+
+                "quiz_submitted",
+
+                False
 
             )
 
@@ -190,91 +287,5 @@ class QuizCard:
             st.error(
 
                 str(e)
-
-            )
-
-    # =====================================================
-    # Quiz Player
-    # =====================================================
-
-    def render_quiz(
-
-        self,
-
-        quiz
-
-    ):
-
-        st.divider()
-
-        st.subheader(
-
-            "📝 Quiz"
-
-        )
-
-        score = 0
-
-        submitted = st.button(
-
-            "Submit Quiz",
-
-            use_container_width=True
-
-        )
-
-        for question in quiz:
-
-            answer = st.radio(
-
-                question["question"],
-
-                question["options"],
-
-                key=f"q_{question['id']}"
-
-            )
-
-            if submitted:
-
-                index = question["labels"].index(
-
-                    question["correct_answer"]
-
-                )
-
-                correct = question["options"][
-
-                    index
-
-                ]
-
-                if answer == correct:
-
-                    score += 1
-
-        if submitted:
-
-            st.divider()
-
-            st.success(
-
-                f"Score : {score} / {len(quiz)}"
-
-            )
-
-            percentage = round(
-
-                score / len(quiz) * 100,
-
-                2
-
-            )
-
-            st.metric(
-
-                "Accuracy",
-
-                f"{percentage}%"
 
             )

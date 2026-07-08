@@ -10,7 +10,7 @@
         "original_filename": "MIT6_S897S19_lec01_300k.mp4",
         "course_name": "",
         "uploaded_at": "2026-06-28 17:11:53",
-        "last_updated": "2026-07-03 22:19:20"
+        "last_updated": "2026-07-08 11:17:50"
     },
     "pipeline": {
         "upload_completed": true,
@@ -51,7 +51,7 @@
     "features": {
         "summary_generated": true,
         "notes_generated": true,
-        "quiz_generated": false,
+        "quiz_generated": true,
         "flashcards_generated": false,
         "mindmap_generated": false
     },
@@ -66,7 +66,7 @@
         "notes_exam_path": "c:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\0bfe8350-6c86-47fb-9ae9-cdd35788d3bf\\notes_exam.md",
         "notes_revision_path": "",
         "notes_cheatsheet_path": "",
-        "quiz_path": "",
+        "quiz_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\0bfe8350-6c86-47fb-9ae9-cdd35788d3bf\\quiz.md",
         "flashcards_path": "",
         "mindmap_path": ""
     }
