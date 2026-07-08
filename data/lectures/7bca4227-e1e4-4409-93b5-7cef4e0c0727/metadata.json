@@ -10,7 +10,7 @@
         "original_filename": "tmpyfq_me4b.mp4",
         "course_name": "",
         "uploaded_at": "2026-07-08 01:28:06",
-        "last_updated": "2026-07-08 02:19:02"
+        "last_updated": "2026-07-08 03:07:10"
     },
     "pipeline": {
         "upload_completed": true,
@@ -50,16 +50,17 @@
     },
     "features": {
         "summary_generated": true,
-        "notes_generated": false,
-        "quiz_generated": false,
+        "notes_generated": true,
+        "quiz_generated": true,
         "flashcards_generated": false,
         "mindmap_generated": false
     },
     "exports": {
         "summary_path": "",
         "notes_path": "",
-        "quiz_path": "",
+        "quiz_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\7bca4227-e1e4-4409-93b5-7cef4e0c0727\\quiz.md",
         "flashcards_path": "",
-        "mindmap_path": ""
+        "mindmap_path": "",
+        "notes_detailed_path": "C:\\Users\\ratho\\OneDrive\\Desktop\\AI-Lecture-Assistant\\data\\lectures\\7bca4227-e1e4-4409-93b5-7cef4e0c0727\\notes_detailed.md"
     }
 }
